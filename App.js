@@ -2,6 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { View, Text } from 'react-native';
 import Games from './src/components/games/games';
 import Game from './src/components/games/game';
 import Players from './src/components/players/players';
@@ -17,7 +18,7 @@ const Tab = createBottomTabNavigator();
 const GamesStack = () => {
   return (
     <Provider store={store}>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator screenOptions={{ headerShown: true }}>
         <Stack.Screen name="GamesList" component={Games} />
         <Stack.Screen name="GameDetail" component={Game} />
       </Stack.Navigator>
@@ -27,7 +28,7 @@ const GamesStack = () => {
 
 const PlayersStack = () => {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator screenOptions={{ headerShown: true }}>
       <Stack.Screen name="PlayersList" component={Players} />
       <Stack.Screen name="PlayerDetail" component={Player} />
     </Stack.Navigator>

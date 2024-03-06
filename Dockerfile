@@ -1,25 +1,38 @@
-FROM node:20-buster-slim
+FROM node:latest
 
-ARG NODE_ENV=production
-ENV NODE_ENV $NODE_ENV
+# Install dependencies
+RUN apt-get update && \
+    apt-get install -y wget unzip && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-ARG PORT=19006
-ENV PORT $PORT
-EXPOSE $PORT 19001 19002
+# Install Android SDK tools
+ENV ANDROID_SDK_ROOT=/opt/android-sdk
+ENV ANDROID_SDK_TOOLS_DIR=${ANDROID_SDK_ROOT}/tools
 
-ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
-ENV PATH /home/node/.npm-global/bin:$PATH
-RUN npm i --unsafe-perm --allow-root -g npm@latest expo-cli@latest
+RUN mkdir -p ${ANDROID_SDK_ROOT} && \
+    wget -q https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip -O android-sdk.zip && \
+    unzip -q android-sdk.zip -d ${ANDROID_SDK_TOOLS_DIR} && \
+    rm -f android-sdk.zip
 
-RUN mkdir /opt/kickoff
-WORKDIR /opt/kickoff
-ENV PATH /opt/kickoff/.bin:$PATH
-COPY ./package.json ./package-lock.json ./
+# Set up environment variables (updated path)
+ENV PATH=${PATH}:${ANDROID_SDK_TOOLS_DIR}/bin:${ANDROID_SDK_ROOT}/platform-tools
+
+# Manually accept Android SDK licenses
+RUN mkdir -p ${ANDROID_SDK_ROOT}/licenses && \
+    echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > ${ANDROID_SDK_ROOT}/licenses/android-sdk-license && \
+    echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > ${ANDROID_SDK_ROOT}/licenses/android-sdk-preview-license && \
+    echo "84831b9409646a918e30573bab4c9c91346d8abd" > ${ANDROID_SDK_ROOT}/licenses/intel-android-extra-license
+
+WORKDIR /app
+
+COPY package*.json ./
+
 RUN npm install
 
-WORKDIR /opt/kickoff/app
-
+# Make sure to copy project files after npm install
 COPY . .
 
-ENTRYPOINT ["npm", "run"]
-CMD ["android"]
+EXPOSE 19000
+
+CMD ["npm", "start", "--", "--host", "lan"]

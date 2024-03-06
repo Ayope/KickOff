@@ -1,11 +1,12 @@
-import { View, ScrollView } from 'react-native';
+import React from 'react';
+import { View, ScrollView, Text } from 'react-native';
 import api from '../../utils/api.js';
 import { useEffect, useState } from 'react';
 import PlayerDetails from './player-details.js';
 import { useRoute } from '@react-navigation/native';
 import BackButton from '../common/back-button.js';
 
-const Player = () => {
+const Player = ({navigation}) => {
   const [player, setPlayer] = useState({});
   const [playerTeam, setPlayerTeam] = useState({})
   
@@ -17,6 +18,18 @@ const Player = () => {
     .then((data) => {
       setPlayer(data.data);
       // get players team 
+      navigation.setOptions({
+        headerTitle: (props) => (
+          <Text
+            {...props}
+            style={{color: 'white', fontWeight: 'bold'}}>
+            {data.data.display_name}
+          </Text>
+        ),
+        headerStyle: {
+          backgroundColor: '#f4511e',
+        },
+      })
       const teams = data.data.teams
       if(teams.length !== 0){
         api(`teams/${teams[0].team_id}`)

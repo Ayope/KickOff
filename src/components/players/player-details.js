@@ -19,6 +19,9 @@ const PlayerDetails = ({ player, playerTeam }) => {
 
   return (
     <View>
+      <View style={{width:'100%', backgroundColor:"green", marginBottom:10}}>
+        <Text style={{margin:12, color: 'black', fontSize: 25}}>{player.display_name}</Text>
+      </View>
       <View style={styles.container}>
         <Image source={require('../../../assets/cover-foot.jpg')} style={styles.coverImage} />
         <Image source={{ uri: player.image_path }} style={styles.profileImage} />

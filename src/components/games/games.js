@@ -47,9 +47,6 @@ const Games = () => {
     }
   });
 
-  console.log(favorites);
-  // when click on favorite the heart color is setted to default
-
   return (
     <ScrollView>
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginTop:50}}>
